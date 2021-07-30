@@ -16,7 +16,7 @@
 ```yaml
 spring:
 	kafka:
-        bootstrap-servers: 172.16.0.118:9092
+        bootstrap-servers: 192.168.235.128:9092
         producer:
           retries: 0
           batch-size: 16384
@@ -61,17 +61,72 @@ public class KafkaProducerRest {
     }
 ```
 
+## 1.2 本地测试
 
+### 1.2.1 Linux安装配置Kafka
 
-# 一、Kafka概述
+- 首先在[Kafka官网](https://kafka.apache.org/downloads)下载压缩包,并在Linux解压;
 
-## 1.1 定义
+- 修改配置文件
+
+  - 首先修改broker,broker为唯一的int值
+    ```bash
+    ############################# Server Basics #############################
+    
+    # The id of the broker. This must be set to a unique integer for each broker.
+    broker.id=0
+    
+    ```
+    
+  - 修改服务器地址端口号
+  
+    ```bash
+    ############################# Socket Server Settings #############################
+    
+    # The address the socket server listens on. It will get the value returned from
+    # java.net.InetAddress.getCanonicalHostName() if not configured.
+    #   FORMAT:
+    #     listeners = listener_name://host_name:port
+    #   EXAMPLE:
+    #     listeners = PLAINTEXT://your.host.name:9092
+    listeners=PLAINTEXT://192.168.235.128:9092
+    ```
+    
+  - 修改zookeeper地址
+    ```bash
+    ############################# Zookeeper#############################
+    
+    # Zookeeper connection string (see zookeeper docs for details).
+    # This is a comma separated host:port pairs, each corresponding to a zk
+    # server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
+    # You can also append an optional chroot string to the urls to specify the
+    # root directory for all kafka znodes.
+    zookeeper.connect=192.168.235.128:2181,192.168.235.129:2181
+    ```
+    
+  - 启动zookeeper
+  
+    ```bash
+    ./bin/zookeeper-server-start.sh ./config/zookeeper.properties
+    ```
+  
+  - 启动Kafka
+  
+    ```bash
+    ./bin/kafka-server-start.sh ./config/server.properties
+    ```
+  
+    
+
+# 二、Kafka概述
+
+## 2.1 定义
 
 Kafka是**分布式**的基于**发布/订阅**模式的**消息队列**，主要用于大数据中信息处理。
 
-## 1.2消息队列
+## 2.2消息队列
 
-### 1.2.1传统消息队列
+### 2.2.1传统消息队列
 
 消息队列的好处：
 
@@ -95,7 +150,7 @@ Kafka是**分布式**的基于**发布/订阅**模式的**消息队列**，主�
 
    消息放入消息队列可在需要时再处理
 
-### 1.2.2消息队列的两种模式 
+### 2.2.2消息队列的两种模式 
 
 1）**点对点模式**（一对一，消费者主动拉取，消费后删除消息）
 
@@ -113,9 +168,9 @@ Kafka是**分布式**的基于**发布/订阅**模式的**消息队列**，主�
 
 ​				缺点：处理速度取决于队列，消费者处理速度过慢会错过消息；消费这处理速度过快会浪费资源
 
-#  二、Kafka组成
+#  三、Kafka组成
 
-## 2.1 Kafka名词
+## 3.1 Kafka名词
 
 - **Broker** 节点
 
